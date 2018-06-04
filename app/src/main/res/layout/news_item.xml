@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/list_item_height">
+
+    <LinearLayout
+        android:id="@+id/ll_news_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/news_section_bgcolor"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp">
+
+        <TextView
+            android:id="@+id/tv_news_section"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="@dimen/news_section_height"
+            android:gravity="center_vertical|left"
+            tools:text="Politics" />
+
+        <TextView
+            android:id="@+id/tv_news_date"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/news_section_height"
+            android:layout_weight="1"
+            android:gravity="center_vertical|right"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="bold"
+            tools:text="04.06.2018" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/img_image"
+        android:layout_width="@dimen/list_item_height"
+        android:layout_height="@dimen/list_item_height"
+        android:layout_below="@+id/ll_news_header"
+        tools:src="@drawable/ic_launcher_background" />
+
+    <LinearLayout
+        android:id="@+id/ll_text_container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_height"
+        android:layout_below="@+id/ll_news_header"
+        android:layout_toRightOf="@+id/img_image"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="8dp">
+
+        <TextView
+            android:id="@+id/tv_news_title"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="@android:color/darker_gray"
+            android:textStyle="bold"
+            tools:text="News title" />
+
+        <TextView
+            android:id="@+id/tv_news_preview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textColor="@android:color/secondary_text_dark"
+            tools:text="Here will be interesting news and facts from different countries about politics and so on" />
+
+        <TextView
+            android:id="@+id/tv_news_author"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical|right"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textColor="@android:color/darker_gray"
+            tools:text="Harold Green" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/img_image"
+        android:layout_marginBottom="2dp"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/separator" />
+</RelativeLayout>
