@@ -10,6 +10,4 @@ public class QueryUtils {
 
     public QueryUtils() {
     }
-
-
 }
