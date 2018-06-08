@@ -9,18 +9,18 @@ import android.widget.ImageView;
 public class News {
     private String mSection;
     private long mDate;
-    private int mImageResourceId;
+    private String mImageUrl;
     private String mTitle;
     private String mNewsTextPreview;
     private String mAuthor;
     private String mUrl;
 
     // Create a new News object.
-    public News(String section, long date, int imageResourceId, String title,
+    public News(String section, long date, String imageUrl, String title,
                 String newsTextPreview, String author, String url) {
         this.mSection = section;
         this.mDate = date;
-        this.mImageResourceId = imageResourceId;
+        this.mImageUrl = imageUrl;
         this.mTitle = title;
         this.mNewsTextPreview = newsTextPreview;
         this.mAuthor = author;
@@ -36,8 +36,8 @@ public class News {
         return mDate;
     }
     // Get the picture ID of the news.
-    public int getImageResourceId() {
-        return mImageResourceId;
+    public String getImageUrl() {
+        return mImageUrl;
     }
     // Get the title of the news.
     public String getNewsTitle() {
@@ -61,7 +61,7 @@ public class News {
         return "News{" +
                 "mSection='" + mSection + '\'' +
                 ", mDate=" + mDate +
-                ", mImageResourceId=" + mImageResourceId +
+                ", mImageResourceId=" + mImageUrl +
                 ", mTitle='" + mTitle + '\'' +
                 ", mNewsTextPreview='" + mNewsTextPreview + '\'' +
                 ", mAuthor='" + mAuthor + '\'' +

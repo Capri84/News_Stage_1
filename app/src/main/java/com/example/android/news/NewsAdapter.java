@@ -7,6 +7,7 @@ package com.example.android.news;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,19 +15,21 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
-    private ArrayList<News> newsArrayList;
     private Context context;
+    private List<News> newsList;
 
-    public NewsAdapter(Context context, ArrayList<News> newsArrayList) {
+    public NewsAdapter(Context context, List<News> newsList) {
         this.context = context;
-        this.newsArrayList = newsArrayList;
+        this.newsList = newsList;
     }
 
     @Override
@@ -39,12 +42,12 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(final NewsAdapter.ViewHolder holder, int position) {
-        final News currentNews = newsArrayList.get(position);
+        final News currentNews = newsList.get(position);
         holder.newsSection.setText(currentNews.getSection());
         holder.newsTitle.setText(currentNews.getNewsTitle());
         holder.newsTextPreview.setText(currentNews.getNewsTextPreview());
         holder.newsAuthor.setText(currentNews.getAuthor());
-        holder.newsImage.setImageResource(currentNews.getImageResourceId());
+        holder.newsImage.setImageBitmap(QueryUtils.bmp);
         // Create a new Date object from the time in milliseconds of the news.
         Date newsDate = new Date(currentNews.getDate());
         SimpleDateFormat dateFormat = new SimpleDateFormat("mm.dd.yyyy");
@@ -62,7 +65,17 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return newsArrayList.size();
+        return newsList.size();
+    }
+
+    public void clear() {
+        newsList.clear();
+        notifyItemRangeRemoved(0, getItemCount());
+    }
+
+    public void addAll(List<News> newsList) {
+        this.newsList = newsList;
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
