@@ -145,24 +145,20 @@ public class QueryUtils {
             JSONObject responseObject = rootObject.getJSONObject("response");
             JSONArray resultsArray = responseObject.getJSONArray("results");
             // If there are results in the results array
-            if (resultsArray.length() > 0) {
+            if (resultsArray.length() != 0) {
                 // Extract out results
                 for (int i = 0; i < resultsArray.length(); i++) {
                     JSONObject resultsObject = resultsArray.getJSONObject(i);
-                    String sectionName = responseObject.getString("sectionName");
-                    String webUrl = responseObject.getString("webUrl");
-                    String publicationDate = responseObject.getString("webPublicationDate");
+                    String sectionName = responseObject.optString("sectionName");
+                    String webUrl = responseObject.optString("webUrl");
+                    String publicationDate = responseObject.optString("webPublicationDate");
                     JSONObject fields = resultsObject.getJSONObject("fields");
-                    String author = fields.getString("byline");
-                    String headline = fields.getString("headline");
-                    String articlePreview = fields.getString("trailText");
-                    String imageUrl = fields.getString("thumbnail");
-                    URL pictureURL = createUrl(imageUrl);
-                    try {
-                        bmp = BitmapFactory.decodeStream(pictureURL.openConnection().getInputStream());
-                    } catch (IOException e) {
-                        Log.e(LOG_TAG, "Problem with getting picture from URL ", e);
-                    }
+                    String author = fields.optString("byline");
+                    String headline = fields.optString("headline");
+                    String articlePreview = fields.optString("trailText");
+                    String imageUrl = fields.optString("thumbnail");
+                    //String pictureURL = createUrl(imageUrl);
+                    newsList.add(new News(sectionName, publicationDate, imageUrl, headline, articlePreview, author, webUrl));
                 }
             }
         } catch (JSONException e) {

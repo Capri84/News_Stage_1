@@ -5,13 +5,12 @@ import android.content.Context;
 import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -75,7 +74,7 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
             emptyStateImageView.setImageResource(R.drawable.ic_launcher_foreground);
         }
 
-        recyclerView = recyclerView.findViewById(R.id.news_list);
+        recyclerView = (RecyclerView) findViewById(R.id.news_list);
         /* use this setting to improve performance if you know that changes
            in content do not change the layout size of the RecyclerView */
         //   recyclerView.setHasFixedSize(true);

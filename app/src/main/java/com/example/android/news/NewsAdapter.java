@@ -9,11 +9,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -47,11 +50,19 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         holder.newsTitle.setText(currentNews.getNewsTitle());
         holder.newsTextPreview.setText(currentNews.getNewsTextPreview());
         holder.newsAuthor.setText(currentNews.getAuthor());
-        holder.newsImage.setImageBitmap(QueryUtils.bmp);
+
+        String image = currentNews.getImageUrl();
+        if (TextUtils.isEmpty(image)) {
+            Picasso.get().load(R.drawable.holder);
+        } else {
+            Picasso.get().load(currentNews.getImageUrl()).into(holder.newsImage);
+        }
+
+        //holder.newsImage.setImageBitmap(currentNews.getImageUrl());
         // Create a new Date object from the time in milliseconds of the news.
-        Date newsDate = new Date(currentNews.getDate());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("mm.dd.yyyy");
-        holder.newsDate.setText(dateFormat.format(newsDate));
+//        Date newsDate = new Date(currentNews.getDate());
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("mm.dd.yyyy");
+        holder.newsDate.setText(currentNews.getDate());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

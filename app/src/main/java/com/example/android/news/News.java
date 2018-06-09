@@ -1,6 +1,6 @@
 package com.example.android.news;
 
-import android.widget.ImageView;
+import java.net.URL;
 
 /**
  * Created by Capri on 04.06.2018.
@@ -8,7 +8,7 @@ import android.widget.ImageView;
 
 public class News {
     private String mSection;
-    private long mDate;
+    private String mDate;
     private String mImageUrl;
     private String mTitle;
     private String mNewsTextPreview;
@@ -16,7 +16,7 @@ public class News {
     private String mUrl;
 
     // Create a new News object.
-    public News(String section, long date, String imageUrl, String title,
+    public News(String section, String date, String imageUrl, String title,
                 String newsTextPreview, String author, String url) {
         this.mSection = section;
         this.mDate = date;
@@ -31,26 +31,32 @@ public class News {
     public String getSection() {
         return mSection;
     }
+
     // Get the date of the news.
-    public long getDate() {
+    public String getDate() {
         return mDate;
     }
+
     // Get the picture ID of the news.
     public String getImageUrl() {
         return mImageUrl;
     }
+
     // Get the title of the news.
     public String getNewsTitle() {
         return mTitle;
     }
+
     // Get the text of the news for the preview.
     public String getNewsTextPreview() {
         return mNewsTextPreview;
     }
+
     // Get the author of the news.
     public String getAuthor() {
         return mAuthor;
     }
+
     // Get the URL of the news.
     public String getUrl() {
         return mUrl;
