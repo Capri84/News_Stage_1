@@ -6,6 +6,7 @@ import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,12 +25,9 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
     // URL for requesting news data
     private static final String NEWS_REQUEST_URL =
             "http://content.guardianapis.com/search?page-size=100&api-key=test&" +
-                    "show-fields=thumbnail%2CtrailText%2Cbyline%2Cheadline&order-by=newest";
+                    "show-fields=thumbnail%2CtrailText%2Cheadline&show-tags=contributor&" +
+                    "order-by=newest";
 
-    // URL for requesting data by search
-  /*  private static final String NEWS_REQUEST_SEARCH_URL =
-            "http://content.guardianapis.com/search?page-size=100&api-key=test&" +
-                    "show-fields=thumbnail%2CtrailText%2Cbyline%2Cheadline&order-by=relevance&q=test";*/
     /**
      * Constant value for the news loader ID. We can choose any integer.
      * This really only comes into play if you're using multiple loaders.
@@ -42,7 +40,7 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
      */
     private TextView emptyStateTextView;
     private ImageView emptyStateImageView;
-
+    private SwipeRefreshLayout refreshLayout;
     private ProgressBar progressBar;
 
     @Override
@@ -52,6 +50,20 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
         progressBar = findViewById(R.id.loading_spinner);
         emptyStateTextView = findViewById(R.id.empty_text_view);
         emptyStateImageView = findViewById(R.id.empty_image_view);
+
+        //RefreshLayout. Changing colors.
+        refreshLayout = findViewById(R.id.swipe);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+            }
+        });
+        refreshLayout.setColorSchemeColors(getResources()
+                .getColor(R.color.colorPrimary), getResources()
+                .getColor(R.color.colorAccent), getResources()
+                .getColor(R.color.colorPrimaryDark), getResources()
+                .getColor(R.color.news_section_bgcolor));
+        refreshLayout.setRefreshing(true);
 
         // Get a reference to the ConnectivityManager to check state of network connectivity
         ConnectivityManager cm =
@@ -74,11 +86,7 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
             emptyStateImageView.setImageResource(R.drawable.ic_launcher_foreground);
         }
 
-        recyclerView = (RecyclerView) findViewById(R.id.news_list);
-        /* use this setting to improve performance if you know that changes
-           in content do not change the layout size of the RecyclerView */
-        //   recyclerView.setHasFixedSize(true);
-
+        recyclerView = findViewById(R.id.news_list);
         // use a linear layout manager
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -100,9 +108,10 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
         // data set.
         if (newsList != null && !newsList.isEmpty()) {
             adapter.addAll(newsList);
+        } else {
+            emptyStateTextView.setText(R.string.no_news);
+            emptyStateImageView.setImageResource(R.drawable.ic_launcher_foreground);
         }
-        emptyStateTextView.setText(R.string.no_news);
-        emptyStateImageView.setImageResource(R.drawable.ic_launcher_foreground);
     }
 
     public void onLoaderReset(Loader<List<News>> loader) {

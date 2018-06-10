@@ -1,7 +1,5 @@
 package com.example.android.news;
 
-import java.net.URL;
-
 /**
  * Created by Capri on 04.06.2018.
  */

@@ -1,7 +1,5 @@
 package com.example.android.news;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -26,8 +24,12 @@ import java.util.List;
 
 public class QueryUtils {
 
-    public static final String LOG_TAG = QueryUtils.class.getName();
-    public static Bitmap bmp;
+    private static final String LOG_TAG = QueryUtils.class.getName();
+    private static final String SECTION = "Section";
+    private static final String WEB_URL = "https://www.theguardian.com/international";
+    private static final String DATE = "Date is N/A";
+    private static final String HEADLINE = "This is an interesting article without a headline";
+    private static final String UNKNOWN_AUTHOR = "Unknown author";
 
     public QueryUtils() {
     }
@@ -142,23 +144,65 @@ public class QueryUtils {
 
         try {
             JSONObject rootObject = new JSONObject(jsonResponse);
-            JSONObject responseObject = rootObject.getJSONObject("response");
-            JSONArray resultsArray = responseObject.getJSONArray("results");
+            JSONObject responseObject = rootObject.optJSONObject("response");
+            JSONArray resultsArray = responseObject.optJSONArray("results");
             // If there are results in the results array
             if (resultsArray.length() != 0) {
+                StringBuilder articleAuthors = new StringBuilder();
                 // Extract out results
                 for (int i = 0; i < resultsArray.length(); i++) {
-                    JSONObject resultsObject = resultsArray.getJSONObject(i);
-                    String sectionName = responseObject.optString("sectionName");
-                    String webUrl = responseObject.optString("webUrl");
-                    String publicationDate = responseObject.optString("webPublicationDate");
-                    JSONObject fields = resultsObject.getJSONObject("fields");
-                    String author = fields.optString("byline");
+                    articleAuthors.setLength(0);
+                    JSONObject resultsObject = resultsArray.optJSONObject(i);
+                    if (resultsObject == null) {
+                        continue;
+                    }
+                    String sectionName = resultsObject.optString("sectionName");
+                    if (TextUtils.isEmpty(sectionName)) {
+                        sectionName = SECTION;
+                    }
+                    String webUrl = resultsObject.optString("webUrl");
+                    if (TextUtils.isEmpty(webUrl)) {
+                        webUrl = WEB_URL;
+                    }
+                    String publicationDate = resultsObject.optString("webPublicationDate");
+                    String date;
+                    if (TextUtils.isEmpty(publicationDate)) {
+                        date = DATE;
+                    } else {
+                        date = publicationDate.substring(0, 10);
+                    }
+                    JSONObject fields = resultsObject.optJSONObject("fields");
+                    if (fields == null) {
+                        continue;
+                    }
                     String headline = fields.optString("headline");
+                    if (TextUtils.isEmpty(headline)) {
+                        headline = HEADLINE;
+                    }
                     String articlePreview = fields.optString("trailText");
+                    if (TextUtils.isEmpty(articlePreview)) {
+                        articlePreview = "";
+                    }
                     String imageUrl = fields.optString("thumbnail");
-                    //String pictureURL = createUrl(imageUrl);
-                    newsList.add(new News(sectionName, publicationDate, imageUrl, headline, articlePreview, author, webUrl));
+                    JSONArray tagsArray = resultsObject.optJSONArray("tags");
+                    // If there are results in the tags array
+                    if (tagsArray.length() != 0) {
+                        for (int j = 0; j < tagsArray.length(); j++) {
+                            JSONObject tagsObject = tagsArray.optJSONObject(j);
+                            String author = tagsObject.optString("webTitle");
+                            if (TextUtils.isEmpty(author)) {
+                                articleAuthors.append(UNKNOWN_AUTHOR);
+                                Log.e(LOG_TAG, UNKNOWN_AUTHOR);
+                            } else {
+                                if (j != tagsArray.length() - 1) {
+                                    articleAuthors.append(author).append(", ");
+                                } else {
+                                    articleAuthors.append(author);
+                                }
+                            }
+                        }
+                    }
+                    newsList.add(new News(sectionName, date, imageUrl, headline, articlePreview, articleAuthors.toString(), webUrl));
                 }
             }
         } catch (JSONException e) {
