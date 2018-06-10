@@ -151,7 +151,6 @@ public class QueryUtils {
                 StringBuilder articleAuthors = new StringBuilder();
                 // Extract out results
                 for (int i = 0; i < resultsArray.length(); i++) {
-                    articleAuthors.setLength(0);
                     JSONObject resultsObject = resultsArray.optJSONObject(i);
                     if (resultsObject == null) {
                         continue;
@@ -180,9 +179,6 @@ public class QueryUtils {
                         headline = HEADLINE;
                     }
                     String articlePreview = fields.optString("trailText");
-                    if (TextUtils.isEmpty(articlePreview)) {
-                        articlePreview = "";
-                    }
                     String imageUrl = fields.optString("thumbnail");
                     JSONArray tagsArray = resultsObject.optJSONArray("tags");
                     // If there are results in the tags array
@@ -190,19 +186,17 @@ public class QueryUtils {
                         for (int j = 0; j < tagsArray.length(); j++) {
                             JSONObject tagsObject = tagsArray.optJSONObject(j);
                             String author = tagsObject.optString("webTitle");
-                            if (TextUtils.isEmpty(author)) {
-                                articleAuthors.append(UNKNOWN_AUTHOR);
-                                Log.e(LOG_TAG, UNKNOWN_AUTHOR);
+                            if (j != tagsArray.length() - 1) {
+                                articleAuthors.append(author).append(", ");
                             } else {
-                                if (j != tagsArray.length() - 1) {
-                                    articleAuthors.append(author).append(", ");
-                                } else {
-                                    articleAuthors.append(author);
-                                }
+                                articleAuthors.append(author);
                             }
                         }
+                    } else {
+                        articleAuthors.append(UNKNOWN_AUTHOR);
                     }
                     newsList.add(new News(sectionName, date, imageUrl, headline, articlePreview, articleAuthors.toString(), webUrl));
+                    articleAuthors.setLength(0);
                 }
             }
         } catch (JSONException e) {

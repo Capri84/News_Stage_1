@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">News</string>
     <!-- Text to display in the list when there are no news -->
-    <string name="no_news">Sorry, no news found :(</string>
+    <string name="no_news">Sorry, no news found :(\nSwipe down to refresh the screen.</string>
     <!-- Error message when there is no internet connectivity [CHAR LIMIT=NONE] -->
-    <string name="no_internet_connection">Ooops... No internet connection.</string>
+    <string name="no_internet_connection">Ooops… No internet connection detected.\nCheck it up and
+        swipe down to refresh the screen.</string>
 </resources>

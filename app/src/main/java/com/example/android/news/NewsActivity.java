@@ -3,6 +3,7 @@ package com.example.android.news;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -20,8 +21,6 @@ import java.util.List;
 
 public class NewsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<News>> {
 
-    public static final String LOG_TAG = NewsActivity.class.getName();
-
     // URL for requesting news data
     private static final String NEWS_REQUEST_URL =
             "http://content.guardianapis.com/search?page-size=100&api-key=test&" +
@@ -34,10 +33,7 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
      */
     private static final int NEWS_LOADER_ID = 1;
     private NewsAdapter adapter;
-    private RecyclerView recyclerView;
-    /**
-     * TextView that is displayed when the list is empty
-     */
+    private NewsLoader loader;
     private TextView emptyStateTextView;
     private ImageView emptyStateImageView;
     private SwipeRefreshLayout refreshLayout;
@@ -51,25 +47,8 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
         emptyStateTextView = findViewById(R.id.empty_text_view);
         emptyStateImageView = findViewById(R.id.empty_image_view);
 
-        //RefreshLayout. Changing colors.
-        refreshLayout = findViewById(R.id.swipe);
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-            }
-        });
-        refreshLayout.setColorSchemeColors(getResources()
-                .getColor(R.color.colorPrimary), getResources()
-                .getColor(R.color.colorAccent), getResources()
-                .getColor(R.color.colorPrimaryDark), getResources()
-                .getColor(R.color.news_section_bgcolor));
-        refreshLayout.setRefreshing(true);
-
-        // Get a reference to the ConnectivityManager to check state of network connectivity
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        // Get details on the currently active default data network
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         // If there is a network connection, fetch data
         if (activeNetwork != null && activeNetwork.isConnected()) {
@@ -78,15 +57,41 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
             // Initialize the loader. Pass in the int ID constant defined above and pass in null for
             // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
             // because this activity implements the LoaderCallbacks interface).
-            loaderManager.initLoader(NEWS_LOADER_ID, null, this);
+            loader = (NewsLoader) loaderManager.initLoader(NEWS_LOADER_ID, null, this);
         } else {
             progressBar.setVisibility(View.GONE);
             // Update empty state with no connection error message
             emptyStateTextView.setText(R.string.no_internet_connection);
-            emptyStateImageView.setImageResource(R.drawable.ic_launcher_foreground);
+            emptyStateImageView.setImageResource(R.drawable.no_internet_access);
         }
 
-        recyclerView = findViewById(R.id.news_list);
+        //RefreshLayout
+        refreshLayout = findViewById(R.id.swipe);
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Get a reference to the ConnectivityManager to check state of network connectivity
+                ConnectivityManager cm =
+                        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                // Get details on the currently active default data network
+                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                // If there is a network connection, fetch data
+                if (activeNetwork != null && activeNetwork.isConnected()) {
+                    adapter.clear();
+                    loader.setUrl(NEWS_REQUEST_URL);
+                    loader.forceLoad();
+                } else {
+                    adapter.clear();
+                    refreshLayout.setRefreshing(false);
+                    emptyStateTextView.setText(R.string.no_internet_connection);
+                    emptyStateImageView.setImageResource(R.drawable.no_internet_access);
+                }
+            }
+        });
+        refreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.CYAN);
+        refreshLayout.setRefreshing(true);
+
+        RecyclerView recyclerView = findViewById(R.id.news_list);
         // use a linear layout manager
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -108,10 +113,12 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
         // data set.
         if (newsList != null && !newsList.isEmpty()) {
             adapter.addAll(newsList);
+            refreshLayout.setRefreshing(false);
         } else {
             emptyStateTextView.setText(R.string.no_news);
-            emptyStateImageView.setImageResource(R.drawable.ic_launcher_foreground);
+            emptyStateImageView.setImageResource(R.drawable.no_data_found);
         }
+        refreshLayout.setRefreshing(false);
     }
 
     public void onLoaderReset(Loader<List<News>> loader) {

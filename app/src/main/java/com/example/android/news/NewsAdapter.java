@@ -44,7 +44,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         holder.newsAuthor.setText(currentNews.getAuthor());
         String image = currentNews.getImageUrl();
         if (TextUtils.isEmpty(image)) {
-            Picasso.get().load(R.drawable.holder);
+            Picasso.get().load(R.drawable.placeholder);
         } else {
             Picasso.get().load(currentNews.getImageUrl()).into(holder.newsImage);
         }

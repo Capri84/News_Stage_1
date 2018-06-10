@@ -9,17 +9,17 @@
         android:id="@+id/ll_news_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/news_section_bgcolor"
+        android:background="@color/newsSectionBgcolor"
         android:orientation="horizontal"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp">
+        android:paddingEnd="@dimen/header_padding"
+        android:paddingStart="@dimen/header_padding">
 
         <TextView
             android:id="@+id/tv_news_section"
             android:layout_width="0dp"
             android:layout_height="@dimen/news_section_height"
             android:layout_weight="1"
-            android:gravity="center_vertical|left"
+            android:gravity="center_vertical|start"
             tools:text="Politics" />
 
         <TextView
@@ -27,7 +27,7 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/news_section_height"
             android:layout_weight="1"
-            android:gravity="center_vertical|right"
+            android:gravity="center_vertical|end"
             android:textAppearance="?android:textAppearanceSmall"
             android:textColor="@android:color/darker_gray"
             android:textStyle="bold"
@@ -40,6 +40,7 @@
         android:layout_height="@dimen/list_item_height"
         android:layout_below="@+id/ll_news_header"
         android:scaleType="centerCrop"
+        tools:ignore="contentDescription"
         tools:src="@drawable/ic_launcher_background" />
 
     <LinearLayout
@@ -47,10 +48,10 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/list_item_height"
         android:layout_below="@+id/ll_news_header"
-        android:layout_toRightOf="@+id/img_image"
+        android:layout_toEndOf="@+id/img_image"
         android:orientation="vertical"
-        android:paddingLeft="16dp"
-        android:paddingRight="8dp">
+        android:paddingEnd="@dimen/header_padding"
+        android:paddingStart="@dimen/padding_start">
 
         <TextView
             android:id="@+id/tv_news_title"
@@ -72,14 +73,15 @@
             android:maxLines="2"
             android:textAppearance="?android:textAppearanceSmall"
             android:textColor="@android:color/secondary_text_dark"
-            tools:text="Here will be interesting news and facts from different countries about politics and so on" />
+            tools:text="Here will be interesting news and facts
+            from different countries about politics and so on" />
 
         <TextView
             android:id="@+id/tv_news_author"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="center_vertical|right"
+            android:gravity="center_vertical|end"
             android:textAppearance="?android:textAppearanceSmall"
             android:textColor="@android:color/darker_gray"
             tools:text="Harold Green" />

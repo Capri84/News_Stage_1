@@ -29,6 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            tools:ignore="contentDescription"
             tools:src="@drawable/ic_launcher_foreground" />
 
         <TextView
@@ -36,6 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:gravity="center"
             tools:text="Ooops... Nothing's here yet" />
     </LinearLayout>
 
