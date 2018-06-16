@@ -84,11 +84,15 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
                     adapter.clear();
                     loader.setUrl(NEWS_REQUEST_URL);
                     loader.forceLoad();
-                    //    recyclerView.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    emptyStateTextView.setVisibility(View.INVISIBLE);
+                    emptyStateImageView.setVisibility(View.INVISIBLE);
                 } else {
                     adapter.clear();
                     refreshLayout.setRefreshing(false);
-                    recyclerView.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.INVISIBLE);
+                    emptyStateTextView.setVisibility(View.VISIBLE);
+                    emptyStateImageView.setVisibility(View.VISIBLE);
                     emptyStateTextView.setText(R.string.no_internet_connection);
                     emptyStateImageView.setImageResource(R.drawable.no_internet_access);
                 }
@@ -120,7 +124,6 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
             adapter.addAll(newsList);
             refreshLayout.setRefreshing(false);
         } else {
-            //   recyclerView.setVisibility(View.GONE);
             emptyStateTextView.setText(R.string.no_news);
             emptyStateImageView.setImageResource(R.drawable.no_data_found);
         }
