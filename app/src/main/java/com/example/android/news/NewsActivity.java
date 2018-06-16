@@ -23,7 +23,7 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
 
     // URL for requesting news data
     private static final String NEWS_REQUEST_URL =
-            "http://content.guardianapis.com/search?page-size=100&api-key=test&" +
+            "http://content.guardianapis.com/search?page-size=5&api-key=test&" +
                     "show-fields=thumbnail%2CtrailText%2Cheadline&show-tags=contributor&" +
                     "order-by=newest";
 
@@ -38,6 +38,7 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
     private ImageView emptyStateImageView;
     private SwipeRefreshLayout refreshLayout;
     private ProgressBar progressBar;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,8 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
         progressBar = findViewById(R.id.loading_spinner);
         emptyStateTextView = findViewById(R.id.empty_text_view);
         emptyStateImageView = findViewById(R.id.empty_image_view);
+        refreshLayout = findViewById(R.id.swipe);
+        recyclerView = findViewById(R.id.news_list);
 
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -58,15 +61,16 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
             // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
             // because this activity implements the LoaderCallbacks interface).
             loader = (NewsLoader) loaderManager.initLoader(NEWS_LOADER_ID, null, this);
+            refreshLayout.setRefreshing(false);
         } else {
             progressBar.setVisibility(View.GONE);
             // Update empty state with no connection error message
             emptyStateTextView.setText(R.string.no_internet_connection);
             emptyStateImageView.setImageResource(R.drawable.no_internet_access);
+            refreshLayout.setRefreshing(false);
         }
 
         //RefreshLayout
-        refreshLayout = findViewById(R.id.swipe);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -80,16 +84,17 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
                     adapter.clear();
                     loader.setUrl(NEWS_REQUEST_URL);
                     loader.forceLoad();
+                    //    recyclerView.setVisibility(View.VISIBLE);
                 } else {
                     adapter.clear();
                     refreshLayout.setRefreshing(false);
+                    recyclerView.setVisibility(View.GONE);
                     emptyStateTextView.setText(R.string.no_internet_connection);
                     emptyStateImageView.setImageResource(R.drawable.no_internet_access);
                 }
             }
         });
         refreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.CYAN);
-        refreshLayout.setRefreshing(true);
 
         RecyclerView recyclerView = findViewById(R.id.news_list);
         // use a linear layout manager
@@ -115,6 +120,7 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
             adapter.addAll(newsList);
             refreshLayout.setRefreshing(false);
         } else {
+            //   recyclerView.setVisibility(View.GONE);
             emptyStateTextView.setText(R.string.no_news);
             emptyStateImageView.setImageResource(R.drawable.no_data_found);
         }
