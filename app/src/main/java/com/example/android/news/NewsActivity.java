@@ -44,29 +44,25 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news);
-        progressBar = findViewById(R.id.loading_spinner);
-        emptyStateTextView = findViewById(R.id.empty_text_view);
-        emptyStateImageView = findViewById(R.id.empty_image_view);
-        refreshLayout = findViewById(R.id.swipe);
-        recyclerView = findViewById(R.id.news_list);
+        initViews();
+
+        // Get a reference to the LoaderManager, in order to interact with loaders.
+        LoaderManager loaderManager = getLoaderManager();
+        // Initialize the loader. Pass in the int ID constant defined above and pass in null for
+        // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
+        // because this activity implements the LoaderCallbacks interface).
+        loader = (NewsLoader) loaderManager.initLoader(NEWS_LOADER_ID, null, this);
 
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         // If there is a network connection, fetch data
         if (activeNetwork != null && activeNetwork.isConnected()) {
-            // Get a reference to the LoaderManager, in order to interact with loaders.
-            LoaderManager loaderManager = getLoaderManager();
-            // Initialize the loader. Pass in the int ID constant defined above and pass in null for
-            // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
-            // because this activity implements the LoaderCallbacks interface).
-            loader = (NewsLoader) loaderManager.initLoader(NEWS_LOADER_ID, null, this);
             refreshLayout.setRefreshing(false);
         } else {
             progressBar.setVisibility(View.GONE);
             // Update empty state with no connection error message
-            emptyStateTextView.setText(R.string.no_internet_connection);
-            emptyStateImageView.setImageResource(R.drawable.no_internet_access);
+            setNoConnectionState();
             refreshLayout.setRefreshing(false);
         }
 
@@ -88,19 +84,14 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
                     emptyStateTextView.setVisibility(View.INVISIBLE);
                     emptyStateImageView.setVisibility(View.INVISIBLE);
                 } else {
-                    adapter.clear();
                     refreshLayout.setRefreshing(false);
                     recyclerView.setVisibility(View.INVISIBLE);
-                    emptyStateTextView.setVisibility(View.VISIBLE);
-                    emptyStateImageView.setVisibility(View.VISIBLE);
-                    emptyStateTextView.setText(R.string.no_internet_connection);
-                    emptyStateImageView.setImageResource(R.drawable.no_internet_access);
+                    setNoConnectionState();
                 }
             }
         });
         refreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.CYAN);
 
-        RecyclerView recyclerView = findViewById(R.id.news_list);
         // use a linear layout manager
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -118,14 +109,12 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
         progressBar.setVisibility(View.GONE);
         // Clear the adapter of previous news data
         adapter.clear();
-        // If there is a valid list of {@link News}, then add them to the adapter's
-        // data set.
+        // If there is a valid list of {@link News}, then add them to the adapter's data set.
         if (newsList != null && !newsList.isEmpty()) {
             adapter.addAll(newsList);
             refreshLayout.setRefreshing(false);
         } else {
-            emptyStateTextView.setText(R.string.no_news);
-            emptyStateImageView.setImageResource(R.drawable.no_data_found);
+            setNoDataState();
         }
         refreshLayout.setRefreshing(false);
     }
@@ -133,5 +122,27 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoaderReset(Loader<List<News>> loader) {
         // Loader reset, so we can clear out our existing data.
         adapter.clear();
+    }
+
+    private void initViews() {
+        progressBar = findViewById(R.id.loading_spinner);
+        emptyStateTextView = findViewById(R.id.empty_text_view);
+        emptyStateImageView = findViewById(R.id.empty_image_view);
+        refreshLayout = findViewById(R.id.swipe);
+        recyclerView = findViewById(R.id.news_list);
+        emptyStateTextView.setVisibility(View.INVISIBLE);
+        emptyStateImageView.setVisibility(View.INVISIBLE);
+    }
+
+    private void setNoConnectionState() {
+        emptyStateTextView.setText(R.string.no_internet_connection);
+        emptyStateImageView.setImageResource(R.drawable.no_internet_access);
+        emptyStateTextView.setVisibility(View.VISIBLE);
+        emptyStateImageView.setVisibility(View.VISIBLE);
+    }
+
+    private void setNoDataState() {
+        emptyStateTextView.setText(R.string.no_news);
+        emptyStateImageView.setImageResource(R.drawable.no_data_found);
     }
 }

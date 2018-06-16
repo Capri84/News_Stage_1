@@ -1,5 +1,6 @@
 package com.example.android.news;
 
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -179,6 +180,7 @@ public class QueryUtils {
                         headline = HEADLINE;
                     }
                     String articlePreview = fields.optString("trailText");
+                    String plain = Html.fromHtml(articlePreview).toString();
                     String imageUrl = fields.optString("thumbnail");
                     JSONArray tagsArray = resultsObject.optJSONArray("tags");
                     // If there are results in the tags array
@@ -195,7 +197,7 @@ public class QueryUtils {
                     } else {
                         articleAuthors.append(UNKNOWN_AUTHOR);
                     }
-                    newsList.add(new News(sectionName, date, imageUrl, headline, articlePreview, articleAuthors.toString(), webUrl));
+                    newsList.add(new News(sectionName, date, imageUrl, headline, plain, articleAuthors.toString(), webUrl));
                     articleAuthors.setLength(0);
                 }
             }
