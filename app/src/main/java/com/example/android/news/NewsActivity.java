@@ -85,7 +85,8 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
                     setViewsInvisible();
                 } else {
                     refreshLayout.setRefreshing(false);
-                    Toast.makeText(getApplicationContext(), R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), R.string.no_internet_connection,
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });
