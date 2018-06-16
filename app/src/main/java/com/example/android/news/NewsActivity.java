@@ -24,7 +24,7 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
 
     // URL for requesting news data
     private static final String NEWS_REQUEST_URL =
-            "http://content.guardianapis.com/search?page-size=5&api-key=test&" +
+            "http://content.guardianapis.com/search?page-size=100&api-key=test&" +
                     "show-fields=thumbnail%2CtrailText%2Cheadline&show-tags=contributor&" +
                     "order-by=newest";
 
