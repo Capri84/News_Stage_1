@@ -69,7 +69,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     public void clear() {
         newsList.clear();
-        notifyItemRangeRemoved(0, getItemCount());
+        notifyDataSetChanged();
     }
 
     public void addAll(List<News> newsList) {
