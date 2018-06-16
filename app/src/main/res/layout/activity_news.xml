@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             tools:ignore="contentDescription"
-            tools:src="@drawable/ic_launcher_foreground" />
+            tools:src="@drawable/no_data_found" />
 
         <TextView
             android:id="@+id/empty_text_view"
@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            tools:text="Ooops... Nothing's here yet" />
+            tools:text="@string/no_news" />
     </LinearLayout>
 
     <ProgressBar

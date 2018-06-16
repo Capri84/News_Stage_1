@@ -5,4 +5,7 @@
     <!-- Error message when there is no internet connectivity [CHAR LIMIT=NONE] -->
     <string name="no_internet_connection">Ooops… No internet connection detected.\nCheck it up and
         swipe down to refresh the screen.</string>
+    <!-- Text for testing with tools:text -->
+    <string name="test_text">Some text</string>
+    <string name="test_date">2018-06-04</string>
 </resources>

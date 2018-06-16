@@ -20,7 +20,7 @@
             android:layout_height="@dimen/news_section_height"
             android:layout_weight="1"
             android:gravity="center_vertical|start"
-            tools:text="Politics" />
+            tools:text="@string/test_text" />
 
         <TextView
             android:id="@+id/tv_news_date"
@@ -31,7 +31,7 @@
             android:textAppearance="?android:textAppearanceSmall"
             android:textColor="@android:color/darker_gray"
             android:textStyle="bold"
-            tools:text="2018-06-04" />
+            tools:text="@string/test_date" />
     </LinearLayout>
 
     <ImageView
@@ -61,7 +61,7 @@
             android:textAppearance="?android:textAppearanceListItemSmall"
             android:textColor="@android:color/darker_gray"
             android:textStyle="bold"
-            tools:text="News title" />
+            tools:text="@string/test_text" />
 
         <TextView
             android:id="@+id/tv_news_preview"
@@ -73,8 +73,7 @@
             android:maxLines="2"
             android:textAppearance="?android:textAppearanceSmall"
             android:textColor="@android:color/secondary_text_dark"
-            tools:text="Here will be interesting news and facts
-            from different countries about politics and so on" />
+            tools:text="@string/test_text" />
 
         <TextView
             android:id="@+id/tv_news_author"
@@ -84,6 +83,6 @@
             android:gravity="center_vertical|end"
             android:textAppearance="?android:textAppearanceSmall"
             android:textColor="@android:color/darker_gray"
-            tools:text="Harold Green" />
+            tools:text="@string/test_text" />
     </LinearLayout>
 </RelativeLayout>
