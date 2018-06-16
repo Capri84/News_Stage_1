@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,23 +82,16 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
                     loader.setUrl(NEWS_REQUEST_URL);
                     loader.forceLoad();
                     recyclerView.setVisibility(View.VISIBLE);
-                    emptyStateTextView.setVisibility(View.INVISIBLE);
-                    emptyStateImageView.setVisibility(View.INVISIBLE);
+                    setViewsInvisible();
                 } else {
                     refreshLayout.setRefreshing(false);
-                    recyclerView.setVisibility(View.INVISIBLE);
-                    setNoConnectionState();
+                    Toast.makeText(getApplicationContext(), R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
                 }
             }
         });
         refreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.CYAN);
 
-        // use a linear layout manager
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        // specify an adapter
-        adapter = new NewsAdapter(getApplicationContext(), new ArrayList<News>());
-        recyclerView.setAdapter(adapter);
+        specifyAdapter();
     }
 
     public Loader<List<News>> onCreateLoader(int i, Bundle bundle) {
@@ -130,8 +124,7 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
         emptyStateImageView = findViewById(R.id.empty_image_view);
         refreshLayout = findViewById(R.id.swipe);
         recyclerView = findViewById(R.id.news_list);
-        emptyStateTextView.setVisibility(View.INVISIBLE);
-        emptyStateImageView.setVisibility(View.INVISIBLE);
+        setViewsInvisible();
     }
 
     private void setNoConnectionState() {
@@ -144,5 +137,19 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
     private void setNoDataState() {
         emptyStateTextView.setText(R.string.no_news);
         emptyStateImageView.setImageResource(R.drawable.no_data_found);
+    }
+
+    private void setViewsInvisible() {
+        emptyStateTextView.setVisibility(View.INVISIBLE);
+        emptyStateImageView.setVisibility(View.INVISIBLE);
+    }
+
+    private void specifyAdapter() {
+        // use a linear layout manager
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        // specify an adapter
+        adapter = new NewsAdapter(getApplicationContext(), new ArrayList<News>());
+        recyclerView.setAdapter(adapter);
     }
 }
