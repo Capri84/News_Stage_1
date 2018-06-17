@@ -26,7 +26,7 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final String NEWS_REQUEST_URL =
             "http://content.guardianapis.com/search?page-size=100&api-key=test&" +
                     "show-fields=thumbnail%2CtrailText%2Cheadline&show-tags=contributor&" +
-                    "order-by=newest";
+                    "order-by=newest123";
 
     /**
      * Constant value for the news loader ID. We can choose any integer.
@@ -40,6 +40,8 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
     private SwipeRefreshLayout refreshLayout;
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
+    private ConnectivityManager cm;
+    private NetworkInfo activeNetwork;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +56,7 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
         // because this activity implements the LoaderCallbacks interface).
         loader = (NewsLoader) loaderManager.initLoader(NEWS_LOADER_ID, null, this);
 
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        getNetworkState();
         // If there is a network connection, fetch data
         if (activeNetwork != null && activeNetwork.isConnected()) {
             refreshLayout.setRefreshing(false);
@@ -71,11 +71,7 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // Get a reference to the ConnectivityManager to check state of network connectivity
-                ConnectivityManager cm =
-                        (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                // Get details on the currently active default data network
-                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                getNetworkState();
                 // If there is a network connection, fetch data
                 if (activeNetwork != null && activeNetwork.isConnected()) {
                     adapter.clear();
@@ -85,8 +81,13 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
                     setViewsInvisible();
                 } else {
                     refreshLayout.setRefreshing(false);
-                    Toast.makeText(getApplicationContext(), R.string.no_internet_connection,
-                            Toast.LENGTH_SHORT).show();
+                    if (emptyStateTextView.getVisibility() == View.VISIBLE &&
+                            emptyStateTextView.getText().equals(getString(R.string.no_internet_connection))) {
+                        //do nothing
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.no_internet_connection,
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -109,9 +110,13 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
             adapter.addAll(newsList);
             refreshLayout.setRefreshing(false);
         } else {
-            setNoDataState();
+            if (activeNetwork != null && activeNetwork.isConnected()) {
+                setNoDataState();
+            } else {
+                setNoConnectionState();
+            }
+            refreshLayout.setRefreshing(false);
         }
-        refreshLayout.setRefreshing(false);
     }
 
     public void onLoaderReset(Loader<List<News>> loader) {
@@ -131,18 +136,23 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
     private void setNoConnectionState() {
         emptyStateTextView.setText(R.string.no_internet_connection);
         emptyStateImageView.setImageResource(R.drawable.no_internet_access);
-        emptyStateTextView.setVisibility(View.VISIBLE);
-        emptyStateImageView.setVisibility(View.VISIBLE);
+        setViewsVisible();
     }
 
     private void setNoDataState() {
         emptyStateTextView.setText(R.string.no_news);
         emptyStateImageView.setImageResource(R.drawable.no_data_found);
+        setViewsVisible();
     }
 
     private void setViewsInvisible() {
         emptyStateTextView.setVisibility(View.INVISIBLE);
         emptyStateImageView.setVisibility(View.INVISIBLE);
+    }
+
+    private void setViewsVisible() {
+        emptyStateTextView.setVisibility(View.VISIBLE);
+        emptyStateImageView.setVisibility(View.VISIBLE);
     }
 
     private void specifyAdapter() {
@@ -153,4 +163,12 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
         adapter = new NewsAdapter(getApplicationContext(), new ArrayList<News>());
         recyclerView.setAdapter(adapter);
     }
+
+    private void getNetworkState() {
+        // Get a reference to the ConnectivityManager to check state of network connectivity
+        cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        // Get details on the currently active default data network
+        activeNetwork = cm.getActiveNetworkInfo();
+    }
+
 }
