@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final String NEWS_REQUEST_URL =
             "http://content.guardianapis.com/search?page-size=100&api-key=test&" +
                     "show-fields=thumbnail%2CtrailText%2Cheadline&show-tags=contributor&" +
-                    "order-by=newest123";
+                    "order-by=newest";
 
     /**
      * Constant value for the news loader ID. We can choose any integer.
@@ -56,44 +55,29 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
         // because this activity implements the LoaderCallbacks interface).
         loader = (NewsLoader) loaderManager.initLoader(NEWS_LOADER_ID, null, this);
 
-        getNetworkState();
-        // If there is a network connection, fetch data
-        if (activeNetwork != null && activeNetwork.isConnected()) {
-            refreshLayout.setRefreshing(false);
-        } else {
-            progressBar.setVisibility(View.GONE);
-            // Update empty state with no connection error message
-            setNoConnectionState();
-            refreshLayout.setRefreshing(false);
-        }
+        specifyAdapter();
+        refresh();
 
         //RefreshLayout
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getNetworkState();
-                // If there is a network connection, fetch data
-                if (activeNetwork != null && activeNetwork.isConnected()) {
-                    adapter.clear();
-                    loader.setUrl(NEWS_REQUEST_URL);
-                    loader.forceLoad();
-                    recyclerView.setVisibility(View.VISIBLE);
-                    setViewsInvisible();
-                } else {
-                    refreshLayout.setRefreshing(false);
-                    if (emptyStateTextView.getVisibility() == View.VISIBLE &&
-                            emptyStateTextView.getText().equals(getString(R.string.no_internet_connection))) {
-                        //do nothing
-                    } else {
-                        Toast.makeText(getApplicationContext(), R.string.no_internet_connection,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                }
+                refresh();
             }
         });
-        refreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.CYAN);
 
-        specifyAdapter();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getNetworkState();
+        if (activeNetwork != null && activeNetwork.isConnected()) {
+            //do nothing
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.no_internet_connection,
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     public Loader<List<News>> onCreateLoader(int i, Bundle bundle) {
@@ -108,15 +92,15 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
         // If there is a valid list of {@link News}, then add them to the adapter's data set.
         if (newsList != null && !newsList.isEmpty()) {
             adapter.addAll(newsList);
-            refreshLayout.setRefreshing(false);
+            setViewsInvisible();
         } else {
             if (activeNetwork != null && activeNetwork.isConnected()) {
                 setNoDataState();
             } else {
                 setNoConnectionState();
             }
-            refreshLayout.setRefreshing(false);
         }
+        refreshLayout.setRefreshing(false);
     }
 
     public void onLoaderReset(Loader<List<News>> loader) {
@@ -129,6 +113,8 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
         emptyStateTextView = findViewById(R.id.empty_text_view);
         emptyStateImageView = findViewById(R.id.empty_image_view);
         refreshLayout = findViewById(R.id.swipe);
+        refreshLayout.setActivated(true);
+        refreshLayout.setColorSchemeColors(Color.RED, Color.GREEN, Color.BLUE, Color.CYAN);
         recyclerView = findViewById(R.id.news_list);
         setViewsInvisible();
     }
@@ -171,4 +157,26 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
         activeNetwork = cm.getActiveNetworkInfo();
     }
 
+    private void refresh() {
+        getNetworkState();
+        // If there is a network connection, fetch data
+        if (activeNetwork != null && activeNetwork.isConnected()) {
+            adapter.clear();
+            loader.setUrl(NEWS_REQUEST_URL);
+            loader.forceLoad();
+            recyclerView.setVisibility(View.VISIBLE);
+        } else {
+            refreshLayout.setRefreshing(false);
+            if (emptyStateTextView.getVisibility() == View.VISIBLE &&
+                    emptyStateTextView.getText().equals(getString(R.string.no_internet_connection))) {
+                //do nothing
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.no_internet_connection,
+                        Toast.LENGTH_SHORT).show();
+                if (emptyStateImageView.isShown()) {
+                    setNoConnectionState();
+                }
+            }
+        }
+    }
 }
