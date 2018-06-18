@@ -7,5 +7,5 @@
         swipe down to refresh the screen.</string>
     <!-- Text for testing with tools:text -->
     <string name="test_text">Some text</string>
-    <string name="test_date">2018-06-04</string>
+    <string name="test_date">2018–06–04</string>
 </resources>
