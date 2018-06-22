@@ -2,20 +2,28 @@ package com.example.android.news;
 
 import android.app.LoaderManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,9 +31,19 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
 
     // URL for requesting news data
     private static final String NEWS_REQUEST_URL =
-            "http://content.guardianapis.com/search?page-size=100&api-key=test&" +
-                    "show-fields=thumbnail%2CtrailText%2Cheadline&show-tags=contributor&" +
-                    "order-by=newest";
+            "http://content.guardianapis.com/search";
+
+    /* "http://content.guardianapis.com/search?page-size=100&api-key=test&" +
+             "show-fields=thumbnail%2CtrailText%2Cheadline&show-tags=contributor&" +
+             "order-by=newest";*/
+    private static final String PAGE_SIZE = "page-size";
+    private static final String API_KEY = "api-key";
+    private static final String KEY = "test";
+    private static final String SHOW_FIELDS = "show-fields";
+    private static final String THUMBNAIL_TRAIL_TEXT_HEADLINE = "thumbnail,trailText,headline";
+    private static final String SHOW_TAGS = "show-tags";
+    private static final String CONTRIBUTOR = "contributor";
+    private static final String ORDER_BY = "order-by";
 
     /**
      * Constant value for the news loader ID. We can choose any integer.
@@ -80,9 +98,10 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
+    @Override
     public Loader<List<News>> onCreateLoader(int i, Bundle bundle) {
         // Create a new loader for the given URL
-        return new NewsLoader(this, NEWS_REQUEST_URL);
+        return new NewsLoader(this, buildQuery());
     }
 
     public void onLoadFinished(Loader<List<News>> loader, List<News> newsList) {
@@ -162,7 +181,7 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
         // If there is a network connection, fetch data
         if (activeNetwork != null && activeNetwork.isConnected()) {
             adapter.clear();
-            loader.setUrl(NEWS_REQUEST_URL);
+            loader.setUrl(buildQuery());
             loader.forceLoad();
             recyclerView.setVisibility(View.VISIBLE);
         } else {
@@ -178,5 +197,55 @@ public class NewsActivity extends AppCompatActivity implements LoaderManager.Loa
                 }
             }
         }
+    }
+
+    private String buildQuery() {
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        // parse breaks apart the URI string that's passed into its parameter
+        Uri baseUri = Uri.parse(NEWS_REQUEST_URL);
+        // buildUpon prepares the baseUri that we just parsed so we can add query parameters to it
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+
+        /* getString retrieves a String value from the preferences. The second parameter is
+           the default value for this preference.*/
+        String pageSize = sharedPrefs.getString(
+                getString(R.string.settings_page_size_key),
+                getString(R.string.settings_page_size_default));
+        if (TextUtils.isEmpty(pageSize)) {
+            pageSize = "0";
+        }
+
+        String orderBy = sharedPrefs.getString(
+                getString(R.string.settings_order_by_key),
+                getString(R.string.settings_order_by_default)
+        );
+
+        // Append query parameter and its value.
+        uriBuilder.appendQueryParameter(PAGE_SIZE, pageSize);
+        uriBuilder.appendQueryParameter(API_KEY, KEY);
+        uriBuilder.appendQueryParameter(SHOW_FIELDS, THUMBNAIL_TRAIL_TEXT_HEADLINE);
+        uriBuilder.appendQueryParameter(SHOW_TAGS, CONTRIBUTOR);
+        uriBuilder.appendQueryParameter(ORDER_BY, orderBy);
+
+        return uriBuilder.toString();
+    }
+
+    @Override
+    // This method initialize the contents of the Activity's options menu.
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the Options Menu we specified in XML
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

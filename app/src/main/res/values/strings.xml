@@ -1,11 +1,35 @@
 <resources>
     <string name="app_name">News</string>
+
     <!-- Text to display in the list when there are no news -->
     <string name="no_news">Sorry, no news found :(\nSwipe down to refresh the screen.</string>
+
     <!-- Error message when there is no internet connectivity [CHAR LIMIT=NONE] -->
     <string name="no_internet_connection">Ooops… No internet connection detected.\nCheck it up and
         swipe down to refresh the screen.</string>
+
     <!-- Text for testing with tools:text -->
     <string name="test_text">Some text</string>
     <string name="test_date">2018–06–04</string>
+
+    <!-- Settings -->
+    <string name="settings_menu_item">Settings</string>
+    <string name="settings_title">Settings</string>
+
+    <string name="settings_page_size_label">Number of news to display</string>
+    <string name="settings_page_size_key" translatable="false">page_size</string>
+    <string name="settings_page_size_default" translatable="false">100</string>
+
+    <!-- Strings For Order-By Preference -->
+    <string name="settings_order_by_label">Order By</string>
+    <string name="settings_order_by_key" translatable="false">order_by</string>
+    <string name="settings_order_by_default" translatable="false">@string/settings_order_by_most_recent_value</string>
+
+    <!-- Label for order-by section option -->
+    <string name="settings_order_by_section_label">Section</string>
+    <string name="settings_order_by_section_value" translatable="false">section</string>
+
+    <!-- Label for order-by most recent option -->
+    <string name="settings_order_by_most_recent_label">Most Recent</string>
+    <string name="settings_order_by_most_recent_value" translatable="false">newest</string>
 </resources>
