@@ -26,8 +26,8 @@
     <string name="settings_order_by_default" translatable="false">@string/settings_order_by_most_recent_value</string>
 
     <!-- Label for order-by section option -->
-    <string name="settings_order_by_section_label">Section</string>
-    <string name="settings_order_by_section_value" translatable="false">section</string>
+    <string name="settings_order_by_section_label">Oldest</string>
+    <string name="settings_order_by_section_value" translatable="false">oldest</string>
 
     <!-- Label for order-by most recent option -->
     <string name="settings_order_by_most_recent_label">Most Recent</string>
